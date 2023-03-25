@@ -1,9 +1,97 @@
-﻿@{
+﻿@model List<Cause>
+@using Microsoft.AspNetCore.Http;
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to this Platform!</h1>
+    <p class="lead">This is a web app to publicly express your objection to creative tax avoidance, unfair employment practices.</p>
+    <hr class="my-4">
+    <p>To create a cause kindly click on the button below!</p>
+    <a class="btn btn-primary btn-lg" asp-area="" asp-controller="Cause" asp-action="Create">Create Cause</a>
+    <!-- <a class="btn btn-primary btn-lg" href="#createCauseModal" data-toggle="modal" role="button">Create Cause</a> -->
 </div>
 
+
+<h1>Trending Causes</h1>
+<!-- row card on the left -->
+<div class="row">
+    <!-- Card 1 -->
+    @foreach (var cause in Model)
+    {
+        <div class="col-md-4">
+            <div class="card">
+                <img class="card-img-top" src="@cause.Image" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">@cause.Title</h5>
+                    <span>@cause.TruncatedDescription</span><br><br>
+                    <div class="social-media-share-buttons">
+                     <a href="https://www.facebook.com/sharer.php?u=@Url.Action("Details", "Cause", new { id = cause.Id }, "https")" class="btn btn-facebook"><i class="bi bi-facebook"></i></a>
+                      <a href="https://twitter.com/share?url=@Url.Action("Details", "Cause", new { id = cause.Id }, "https")" class="btn btn-twitter"><i class="bi bi-twitter"></i></a>
+                      <a href="https://www.linkedin.com/sharing/share-offsite/?url=@Url.Action("Details", "Cause", new { id = cause.Id }, "https")" class="btn btn-linkedin"><i class="bi bi-linkedin"></i></a>
+                      <a href="https://www.facebook.com/sharer.php?u=@Url.Action("Details", "Cause", new { id = cause.Id }, "https")" class="btn btn-reddit"><i class="bi bi-reddit"></i></a>
+                    </div>
+                    <br>
+
+                    <p class="card-text">@(cause.SignatureCount / (double)cause.Goal * 100)% of goal reached</p>
+
+                    <div class="progress mt-3">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @(cause.SignatureCount / (double)cause.Goal * 100)%;" aria-valuenow="@cause.SignatureCount" aria-valuemin="0" aria-valuemax="@cause.Goal">@(cause.SignatureCount / (double)cause.Goal * 100)%</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <i class="bi bi-person-fill"></i>
+                            <span title="Creator">@cause.User.FirstName @cause.User.LastName</span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <p class="card-text"><i class="bi bi-people-fill"><small class="text-muted" data-toggle="modal" data-target="#userModal_@cause.Id" title="@cause.SignatureCount Supporters">Total supporters: @cause.SignatureCount</small></i></p>
+                        </div>
+                    </div>
+
+
+                    <a href="@Url.Action("Details", "Cause", new { id = cause.Id })" class="btn btn-primary">Sign the Petition</a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="userModal_@cause.Id" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userModalLabel">Cause Supporters</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                            @if (cause.signatures != null && cause.signatures.Any())
+                            {
+                                <ul id="userList">
+                                    @foreach (var signer in cause.signatures)
+                                    {
+                                        <li>@signer.Signer</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span>No supporters found</span>
+                            }
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<!-- row card 1 ends -->

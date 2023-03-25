@@ -1,0 +1,49 @@
+﻿@model Register
+
+<div class="row d-flex justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="Register" asp-controller="Account" method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+
+            <h2 class="text-center">Registration</h2>
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-group">
+                <label for="First">First Name:</label>
+                <input asp-for="FirstName" class="form-control" autocomplete="firstname" aria-required="true" placeholder="First Name">
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName">Last Name:</label>
+                <input asp-for="LastName" class="form-control" autocomplete="lastname" aria-required="true" placeholder="Last Name">
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName">UserName:</label>
+                <input asp-for="UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="User Name">
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password">
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword">Confirm Password</label>
+                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password">
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <!-- <div class="alert alert-danger" id="error-msg" style="display:none;">Incorrect username or password.</div> -->
+            Already registered? <a class="nav-link text-dark" id="login" asp-controller="Account" asp-action="Login">Login</a>
+        </form>
+</div>
+    </div>
+
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }

@@ -1,0 +1,97 @@
+﻿@model Cause
+    @using Humanizer;
+    @using System.Security.Claims;
+    @using Microsoft.AspNetCore.Identity
+    @inject SignInManager<ApplicationUser> SignInManager
+    @inject UserManager<ApplicationUser> UserManager
+
+    @{
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await UserManager.GetUserAsync(User);
+    }
+    @{
+        ViewData["Title"] = "Cause Details";
+    }
+
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to this Platform!</h1>
+        <p class="lead">This is a web app to publicly express your objection to creative tax avoidance, unfair employment practices.</p>
+        <hr class="my-4">
+        <p>To create a cause kindly click on the button below!</p>
+        <a class="btn btn-primary btn-lg" asp-area="" asp-controller="Cause" asp-action="Create">Create Cause</a>
+    </div>
+
+    <div class="row">
+        <!-- Picture card on the left -->
+        <div class="col-md-8">
+            <div class="card">
+                <img src="~/images/petition.jpg" class="card-img-top" alt="your-image-alt-text">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Title</h5>
+                    <p class="card-text">@Model.Description</p>
+                </div>
+            </div>
+        </div>
+        <!-- Petition signature card on the right -->
+        <div class="col-md-4">
+            <div class="card">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["SuccessMessage"]
+                        <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&#215;</button>
+                    </div>
+
+                }
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                        <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&#215;</button>
+                    </div>
+                }
+            <div class="card-body">
+                <span>@Model.SignatureCount have signed. Let’s get to 10!</span>
+
+                @foreach (var signature in Model.signatures)
+                {
+                    <div class="mt-2">
+                        <i class="bi bi-person-square fs-4"></i>
+                        <small>@signature.Signer signed @signature.SignedDate.Humanize()</small>
+                    </div>
+                }
+                <h4 class="card-title">Sign this cause</h4>
+
+                <div class="col-md-6">
+                    <i class="bi bi-person-fill"></i>
+                    <span>Creator:@Model.User.FirstName @Model.User.LastName</span>
+                </div>
+                <form asp-action="Sign" asp-controller="Cause" id="myForm" method="post">
+                    <input type="hidden" name="CauseId" id="CauseId" value="@Model.Id" />
+                    <input type="hidden" name="FullName" id="FullName" value="@user.FirstName @user.LastName" />
+                    <input type="hidden" name="Email" id="Email" value="@user" />
+                    <div class="form-group">
+                        <label>I’m signing because… (optional):</label>
+                        <textarea id="Reason" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-lock-fill">Sign this cause</i></button>
+                </form>
+                <br>
+                <br>
+                <!-- Progress bar -->
+                <div class="progress mt-3">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.SignatureCount / (double)Model.Goal * 100)%;" aria-valuenow="@Model.SignatureCount" aria-valuemin="0" aria-valuemax="@Model.Goal">@Model.SignatureCount / @Model.Goal %</div>
+                 </div>
+
+ 
+
+                <p class="mt-3">@(Model.SignatureCount / (double)Model.Goal * 100)% of goal reached</p>
+                <p>Signature Counts: @Model.SignatureCount</p>
+            </div>
+            </div>
+        </div>
+    </div>
+
+

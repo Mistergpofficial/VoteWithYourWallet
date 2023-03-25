@@ -1,0 +1,77 @@
+﻿@model List<Cause>
+@using Microsoft.AspNetCore.Http;
+@{
+    ViewData["Title"] = "Admin Page";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+        <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&#215;</button>
+    </div>
+
+}
+<h1>List of Causes</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Cause Name</th>
+            <th>Creator</th>
+            <th>Signed By</th>
+            <th>Signed Date</th>
+            <th>Signature Counts</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="cause-list">
+        @foreach (var cause in Model)
+        {
+            <tr>
+                <td>@cause.Id</td>
+                <td>@cause.Title</td>
+                <td>@cause.Creator</td>
+                <td>
+                    @if (cause.signatures != null && cause.signatures.Any())
+                    {
+                        <ul>
+                            @foreach (var signer in cause.signatures)
+                            {
+                                <li>@signer.Signer</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>No signers found</span>
+                    }
+                </td>
+                <td>
+                    @if (cause.signatures != null && cause.signatures.Any())
+                    {
+                        <ul>
+                            @foreach (var signer in cause.signatures)
+                            {
+                                <li>@signer.SignedDate.ToShortDateString()</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>No signers found</span>
+                    }
+                </td>
+                <td>@cause.SignatureCount</td>
+                <td>
+                    <form method="post" asp-controller="Admin" asp-action="Delete">
+                        <input type="hidden" name="causeId" value="@cause.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm delete-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
